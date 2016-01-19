@@ -3,7 +3,7 @@
     using System.ComponentModel.DataAnnotations;
     using Newtonsoft.Json;
     using Data.Common.Constants;
-    // Models used as parameters to AccountController actions.
+    using System;    // Models used as parameters to AccountController actions.
 
     public class AddExternalLoginBindingModel
     {
@@ -54,14 +54,12 @@
         public string Username { get; set; }
 
         [Required]
-        [MaxLength(ValidationConstants.FirstNameMaxLength, ErrorMessage = ValidationConstants.FirstNameMaxLengthErrorMessage)]
-        [MinLength(ValidationConstants.FirstNameMinLength, ErrorMessage = ValidationConstants.FirstNameMinLengthErrorMessage)]
-        public string FirstName { get; set; }
+        [MaxLength(ValidationConstants.FullNameMaxLength, ErrorMessage = ValidationConstants.FullNameMaxLengthErrorMessage)]
+        [MinLength(ValidationConstants.FullNameMinLength, ErrorMessage = ValidationConstants.FullNameMinLengthErrorMessage)]
+        public string FullName { get; set; }
 
         [Required]
-        [MaxLength(ValidationConstants.LastNameMaxLength, ErrorMessage = ValidationConstants.LastNameMaxLengthErrorMessage)]
-        [MinLength(ValidationConstants.LastNameMinLength, ErrorMessage = ValidationConstants.LastNameMinLengthErrorMessage)]
-        public string LastName { get; set; }
+        public string DateOfBirth { get; set; }
     }
 
     public class RegisterExternalBindingModel

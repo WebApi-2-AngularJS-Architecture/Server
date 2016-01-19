@@ -7,6 +7,7 @@
 
     public class UserBriefDataTransferModel : IMapFrom<User>
     {
+        [Required]
         [MaxLength(ValidationConstants.UsernameMaxLength, ErrorMessage = ValidationConstants.UsernameMaxLengthErrorMessage)]
         [MinLength(ValidationConstants.UsernameMinLength, ErrorMessage = ValidationConstants.UsernameMinLengthErrorMessage)]
         public string UserName { get; set; }

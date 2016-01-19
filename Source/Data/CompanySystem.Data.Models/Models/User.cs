@@ -14,18 +14,14 @@
     public class User : IdentityUser
     {
         [Required]
-        [MaxLength(ValidationConstants.FirstNameMaxLength, ErrorMessage = ValidationConstants.FirstNameMaxLengthErrorMessage)]
-        [MinLength(ValidationConstants.FirstNameMinLength, ErrorMessage = ValidationConstants.FirstNameMinLengthErrorMessage)]
-        public string FirstName { get; set; }
+        [MaxLength(ValidationConstants.FullNameMaxLength, ErrorMessage = ValidationConstants.FullNameMaxLengthErrorMessage)]
+        [MinLength(ValidationConstants.FullNameMinLength, ErrorMessage = ValidationConstants.FullNameMinLengthErrorMessage)]
+        public string FullName { get; set; }
 
         [Required]
-        [MaxLength(ValidationConstants.LastNameMaxLength, ErrorMessage = ValidationConstants.LastNameMaxLengthErrorMessage)]
-        [MinLength(ValidationConstants.LastNameMinLength, ErrorMessage = ValidationConstants.LastNameMinLengthErrorMessage)]
-        public string LastName { get; set; }
+        public DateTime DateOfBirth { get; set; }
 
-        public virtual Country Country { get; set; }
-
-        public virtual City City { get; set; }
+        public virtual ICollection<Vote> Votes { get; set; }
 
         public async Task<ClaimsIdentity> GenerateUserIdentityAsync(UserManager<User> manager, string authenticationType)
         {
@@ -35,16 +31,5 @@
             // Add custom user claims here
             return userIdentity;
         }
-
-        //: IValidatableObject
-        //public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
-        //{
-        //    var isModelValid = this.EGN.All(Char.IsDigit);
-
-        //    if (!isModelValid)
-        //    {
-        //        yield return new ValidationResult("EGN must contain only digits from 0 to 9 inclusive.", new[] { nameof(this.EGN) });
-        //    }
-        //}
     }
 }

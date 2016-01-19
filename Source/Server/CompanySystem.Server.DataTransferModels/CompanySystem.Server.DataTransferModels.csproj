@@ -51,9 +51,15 @@
   <ItemGroup>
     <Compile Include="Account\AccountBindingModels.cs" />
     <Compile Include="Account\AccountViewModels.cs" />
+    <Compile Include="BirthdayPresentEvent\ActiveEventsDataTransferModel.cs" />
+    <Compile Include="BirthdayPresentEvent\ActiveEventsWithPresentsDataTansferModel.cs" />
+    <Compile Include="BirthdayPresentEvent\BirthdayPresentEventCreationDataTransferModel.cs" />
+    <Compile Include="Presents\PresentDataTransferModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Users\UserBriefDataTransferModel.cs" />
     <Compile Include="Users\UserDetailedDataTransferModel.cs" />
+    <Compile Include="Votes\VotesDataTransferModel.cs" />
+    <Compile Include="Votes\VotesDetailedDataTransferModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

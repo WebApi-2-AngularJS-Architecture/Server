@@ -57,9 +57,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Models\City.cs" />
-    <Compile Include="Models\Country.cs" />
+    <Compile Include="Models\BirthdayPresentEvent.cs" />
+    <Compile Include="Models\Present.cs" />
     <Compile Include="Models\User.cs" />
+    <Compile Include="Models\Vote.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

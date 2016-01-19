@@ -219,7 +219,8 @@
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
-    <Compile Include="Controllers\UserController.cs" />
+    <Compile Include="Controllers\BirthdayPresentEventsController.cs" />
+    <Compile Include="Controllers\VotesController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -272,10 +273,6 @@
     <ProjectReference Include="..\CompanySystem.Server.DataTransferModels\CompanySystem.Server.DataTransferModels.csproj">
       <Project>{8b223247-ff6f-4824-a088-20e314cca7e6}</Project>
       <Name>CompanySystem.Server.DataTransferModels</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\CompanySystem.Server.Infrastructure\CompanySystem.Server.Infrastructure.csproj">
-      <Project>{51ad2630-144f-4a30-9bc7-8e9b03a578b8}</Project>
-      <Name>CompanySystem.Server.Infrastructure</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

@@ -7,9 +7,11 @@
 
     public interface ICompanySystemDbContext
     {
-        IDbSet<City> Cities { get; set; }
+        IDbSet<Present> Presents { get; set; }
 
-        IDbSet<Country> Countries { get; set; }
+        IDbSet<Vote> Votes { get; set; }
+
+        IDbSet<BirthdayPresentEvent> BirthdayPresentEvent { get; set; }
 
         DbSet<TEntity> Set<TEntity>() where TEntity : class;
 

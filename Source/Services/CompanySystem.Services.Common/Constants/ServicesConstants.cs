@@ -9,5 +9,11 @@
     public class ServicesConstants
     {
         public const int DbModelInsertionFailed = -1;
+        public const int DbModelCreationFailed = -2;
+
+        public const bool EventCancellationSuccessful = true;
+        public const bool EventCancellationFailed = false;
+
+        public const int VoteCreationSuccessful = 1;
     }
 }

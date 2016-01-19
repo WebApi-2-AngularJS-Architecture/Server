@@ -335,12 +335,14 @@
                 return BadRequest(ModelState);
             }
 
+            var dateOfBirth = DateTime.Parse(model.DateOfBirth);
+
             var user = new User()
             {
                 UserName = model.Username,
                 Email = model.Email,
-                FirstName = model.FirstName,
-                LastName = model.LastName
+                FullName = model.FullName,
+                DateOfBirth = dateOfBirth
             };
 
             IdentityResult result = await UserManager.CreateAsync(user, model.Password);

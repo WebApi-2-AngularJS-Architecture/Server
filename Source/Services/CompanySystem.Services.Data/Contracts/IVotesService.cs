@@ -2,18 +2,19 @@
 {
     using Common.Contracts;
     using CompanySystem.Data.Models.Models;
+    using Server.DataTransferModels.Votes;
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
 
-    public interface ICitiesService : IService
+    public interface IVotesService : IService
     {
-        IQueryable<City> All();
+        IQueryable<Vote> All();
 
-        Task<City> GetByName(string name);
+        Task<int> Add(VotesDataTransferModel model);
 
-        Task<int> Add(City city);
+        Task<ICollection<Vote>> GetAllVotesForEvent(int eventId);
     }
 }
