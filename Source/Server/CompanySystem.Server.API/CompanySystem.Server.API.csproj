@@ -220,6 +220,7 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\BirthdayPresentEventsController.cs" />
+    <Compile Include="Controllers\PresentsController.cs" />
     <Compile Include="Controllers\VotesController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>

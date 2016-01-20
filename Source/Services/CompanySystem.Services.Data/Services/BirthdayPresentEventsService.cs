@@ -13,7 +13,7 @@
     using Server.DataTransferModels.Users;
     using Server.DataTransferModels.Votes;
     using Server.DataTransferModels.Presents;
-
+    using AutoMapper.QueryableExtensions;
     public class BirthdayPresentEventsService : IBirthdayPresentEventsService
     {
         private IRepository<BirthdayPresentEvent> birthdayPresentEvents;
@@ -21,7 +21,7 @@
         private IRepository<Present> presents;
 
         public BirthdayPresentEventsService(IRepository<BirthdayPresentEvent> birthdayPresentEvents,
-            IRepository<User> users, 
+            IRepository<User> users,
             IRepository<Present> presents)
         {
             this.birthdayPresentEvents = birthdayPresentEvents;
@@ -34,7 +34,7 @@
             return this.birthdayPresentEvents.All();
         }
 
-        public async Task<int> Add(BirthdayPresentEventCreationDataTransferModel model)
+        public async Task<int> CreateEvent(BirthdayPresentEventCreationDataTransferModel model)
         {
             if (this.CanCreateEvent(model))
             {
@@ -72,13 +72,16 @@
 
         }
 
-        public async Task<bool> CancelEvent(int eventId)
+        public async Task<bool> CancelEvent(BirthdayPresentEventCancelationDataTransferModel model)
         {
-            var eventForCancelation = await this.birthdayPresentEvents.All().SingleOrDefaultAsync(x => x.Id == eventId && x.IsActive);
-            
-            if(eventForCancelation != null)
+            var eventForCancelation = await this.birthdayPresentEvents.All().SingleOrDefaultAsync(x => x.Id == model.EventId && x.IsActive);
+
+            if (this.CanCancelEvent(eventForCancelation, model))
             {
                 eventForCancelation.IsActive = false;
+                // Dark magic
+                eventForCancelation.BirthdayGuy = eventForCancelation.BirthdayGuy;
+
                 await this.birthdayPresentEvents.SaveChangesAsync();
 
                 return ServicesConstants.EventCancellationSuccessful;
@@ -87,49 +90,24 @@
             return ServicesConstants.EventCancellationFailed;
         }
 
-        public async Task<ICollection<ActiveEventDataTransferModel>> GetAllVisibleActive(UserBriefDataTransferModel model)
+        public async Task<ICollection<BirthdayPresentEventDataTransferModel>> GetAllVisibleActive(UserBriefDataTransferModel model)
         {
-            // TODO: Use automapper for cleaner code
             var activeEvents = await this.birthdayPresentEvents.All()
                 .Where(x => !x.BirthdayGuy.UserName.Equals(model.UserName) && x.IsActive)
-                .Select(x=> new ActiveEventDataTransferModel()
-                {
-                    BirthdayDate = x.BirthdayDate,
-                    BirthdayGuyUsername = x.BirthdayGuy.UserName,
-                    CreatorUsername = x.Creator.UserName,
-                    Votes = x.Votes.Select(v => new VotesDetailedDataTransferModel()
-                    {
-                        BirthdayPresentDescription = v.Present.Description,
-                        UserVoted = v.UserVoted.UserName,
-                        EventId = v.BirthdayPresentEventId
-                    }).ToList(),
-                    Id = x.Id,
-                    IsActive = x.IsActive
-                })
+                .ProjectTo<BirthdayPresentEventDataTransferModel>()
                 .ToListAsync();
 
             return activeEvents;
         }
 
-        public async Task<ICollection<BirthdayPresentEvent>> GetAllVisibleUnactive(UserBriefDataTransferModel model)
+        public async Task<ICollection<BirthdayPresentEventDataTransferModel>> GetAllVisibleUnactive(UserBriefDataTransferModel model)
         {
-            return await this.birthdayPresentEvents.All()
-                .Where(x => !x.BirthdayGuy.UserName.Equals(model.UserName) && !x.IsActive)
-                .ToListAsync();
-        }
+            var unactiveEvents = await this.birthdayPresentEvents.All()
+               .Where(x => !x.BirthdayGuy.UserName.Equals(model.UserName) && !x.IsActive)
+               .ProjectTo<BirthdayPresentEventDataTransferModel>()
+               .ToListAsync();
 
-        public async Task<ICollection<PresentDataTransferModel>> GetAvailablePresents()
-        {
-            var presents = await this.presents.All()
-                .Select(x => new PresentDataTransferModel()
-                {
-                    Description = x.Description,
-                    Id = x.Id,
-                    PriceInEuro = x.PriceInEuro
-                })
-                .ToListAsync();
-
-            return presents;
+            return unactiveEvents;
         }
 
         private bool CanCreateEvent(BirthdayPresentEventCreationDataTransferModel model)
@@ -162,6 +140,11 @@
 
             // If none of the above is true, then an event may be created.
             return true;
+        }
+
+        private bool CanCancelEvent(BirthdayPresentEvent eventForCancelation, BirthdayPresentEventCancelationDataTransferModel model)
+        {
+            return eventForCancelation != null && eventForCancelation.Creator.UserName.Equals(model.RequestUsername);
         }
     }
 }

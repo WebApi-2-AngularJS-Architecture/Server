@@ -1,20 +1,18 @@
 ﻿namespace CompanySystem.Services.Data.Contracts
 {
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Threading.Tasks;
     using Common.Contracts;
     using CompanySystem.Data.Models.Models;
     using Server.DataTransferModels.Votes;
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
 
     public interface IVotesService : IService
     {
         IQueryable<Vote> All();
 
-        Task<int> Add(VotesDataTransferModel model);
+        Task<int> Add(VoteCreationDataTransferModel model);
 
-        Task<ICollection<Vote>> GetAllVotesForEvent(int eventId);
+        Task<ICollection<VoteDetailsDataTransferModel>> GetAllVotesForEvent(int eventId);
     }
 }

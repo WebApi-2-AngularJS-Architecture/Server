@@ -1,5 +1,6 @@
 ﻿namespace CompanySystem.Server.API.Controllers
 {
+    using Common.Constants;
     using DataTransferModels.Votes;
     using Services.Common.Constants;
     using Services.Data.Contracts;
@@ -30,21 +31,21 @@
                 return this.Ok(votes);
             }
 
-            return this.Ok("There are no votes currently for this event.");
+            return this.Ok(ServerConstants.NoVotesMessage);
         }
 
         [HttpPost]
         [Route("Create")]
-        public async Task<IHttpActionResult> VoteForEvent([FromUri]VotesDataTransferModel model)
+        public async Task<IHttpActionResult> VoteForEvent([FromUri]VoteCreationDataTransferModel model)
         {
             var result = await this.votes.Add(model);
 
             if(result == ServicesConstants.VoteCreationSuccessful)
             {
-                return this.Ok("Vote successfully added");
+                return this.Ok(ServerConstants.VoteSuccessfulMessage);
             }
 
-            return this.BadRequest("Voting failed");
+            return this.BadRequest(ServerConstants.VoteFailedMessage);
         }
     }
 }

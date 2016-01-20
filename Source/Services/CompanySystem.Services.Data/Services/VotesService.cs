@@ -1,16 +1,16 @@
 ﻿namespace CompanySystem.Services.Data.Services
 {
-    using Contracts;
-    using System;
     using System.Collections.Generic;
+    using System.Data.Entity;
     using System.Linq;
-    using System.Text;
     using System.Threading.Tasks;
     using CompanySystem.Data.Models.Models;
-    using Server.DataTransferModels.Votes;
     using CompanySystem.Data.Contracts;
+    using Contracts;
     using Common.Constants;
-    using System.Data.Entity;
+    using Server.DataTransferModels.Votes;
+    using AutoMapper.QueryableExtensions;
+
     public class VotesService : IVotesService
     {
         private IRepository<Vote> votes;
@@ -34,13 +34,13 @@
             return this.votes.All();
         }
 
-        public async Task<int> Add(VotesDataTransferModel model)
+        public async Task<int> Add(VoteCreationDataTransferModel model)
         {
             var present = this.presents.GetById(model.PresentId);
             var birthdayPresentEvent = this.events.GetById(model.BirthdayPresentEventId);
             var userVoted = await this.users.All().SingleOrDefaultAsync(x=> x.UserName == model.UserVotedUsername);
 
-            var canVote = await this.CanCreateVote(present, birthdayPresentEvent, userVoted);
+            var canVote = await this.CanVote(present, birthdayPresentEvent, userVoted);
 
             if (!canVote)
             {
@@ -60,35 +60,60 @@
             return ServicesConstants.VoteCreationSuccessful;
         }
 
-        public async Task<ICollection<Vote>> GetAllVotesForEvent(int eventId)
+        public async Task<ICollection<VoteDetailsDataTransferModel>> GetAllVotesForEvent(int eventId)
         {
-            var votes = await this.votes.All().Where(x => x.BirthdayPresentEventId == eventId).ToListAsync();
+            var votes = await this.votes.All()
+                .Where(x => x.BirthdayPresentEventId == eventId)
+                .ProjectTo<VoteDetailsDataTransferModel>()
+                .ToListAsync();
 
             return votes;
         }
 
-        private async Task<bool> CanCreateVote(Present present, BirthdayPresentEvent birthdayPresentEvent, User userVoted)
+        private async Task<bool> CanVote(Present present, BirthdayPresentEvent birthdayPresentEvent, User userVoted)
         {
-            // Cannot vote with invalid data
-            if (present == null || birthdayPresentEvent == null || userVoted == null)
+            if (!this.VotingDataIsValid(present,birthdayPresentEvent, userVoted))
             {
                 return false;
             }
 
-            // Cannot vote for unactive event
             if(!birthdayPresentEvent.IsActive)
             {
                 return false;
             }
 
-            // Cannot vote on one event twice
+            if (birthdayPresentEvent.BirthdayGuy.UserName == userVoted.UserName)
+            {
+                return false;
+            }
+
+            if(await this.UserAlreadyVoted(birthdayPresentEvent, userVoted))
+            {
+                return false;
+            }
+           
+            return true;
+        }
+
+        private async Task<bool> UserAlreadyVoted(BirthdayPresentEvent birthdayPresentEvent, User userVoted)
+        {
             var userAlreadyVoted = await this.votes.All()
-               .AnyAsync(
+                .AnyAsync(
                    x =>
                        x.BirthdayPresentEventId == birthdayPresentEvent.Id &&
                        x.UserVotedId.Equals(userVoted.Id));
 
             if (userAlreadyVoted)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        private bool VotingDataIsValid(Present present, BirthdayPresentEvent birthdayPresentEvent, User userVoted)
+        {
+            if (present == null || birthdayPresentEvent == null || userVoted == null)
             {
                 return false;
             }

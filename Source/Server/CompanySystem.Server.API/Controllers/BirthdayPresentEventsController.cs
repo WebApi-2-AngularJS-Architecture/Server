@@ -33,52 +33,33 @@
         }
 
         [HttpGet]
-        [Route("Presents")]
-        public async Task<IHttpActionResult> GetAvailablePresents()
-        {
-            var presents = await this.birthdayPresentEvents.GetAvailablePresents();
-
-            return this.Ok(presents);
-        }
-
-        [HttpGet]
         [Route("Unactive")]
         public async Task<IHttpActionResult> GetAllUnactiveEvents([FromUri]UserBriefDataTransferModel model)
         {
             var unactiveEvents = await this.birthdayPresentEvents.GetAllVisibleUnactive(model);
 
-            // TODO: Use automapper for cleaner code
-            var responseObjects = unactiveEvents.Select(x => new ActiveEventDataTransferModel()
-            {
-                BirthdayDate = x.BirthdayDate,
-                BirthdayGuyUsername = x.BirthdayGuy.UserName,
-                CreatorUsername = x.Creator.UserName,
-                IsActive = x.IsActive,
-                Votes = x.Votes.Select(v => new VotesDetailedDataTransferModel()
-                {
-                    BirthdayPresentDescription = v.Present.Description,
-                    UserVoted = v.UserVoted.UserName,
-                    EventId = v.BirthdayPresentEventId
-                }).ToList()
-            }).ToList();
-
-            return this.Ok(responseObjects);
+            return this.Ok(unactiveEvents);
         }
 
         [HttpPost]
-        [Route("Cancel/{id}")]
-        public async Task<IHttpActionResult> CancelEvent(int id)
+        [Route("Cancel")]
+        public async Task<IHttpActionResult> CancelEvent([FromUri] BirthdayPresentEventCancelationDataTransferModel model)
         {
-            var isCanceled = await this.birthdayPresentEvents.CancelEvent(id);
+            var isCanceled = await this.birthdayPresentEvents.CancelEvent(model);
 
-            return this.Ok(isCanceled);
+            if(!isCanceled)
+            {
+                return this.BadRequest("Event cannnot be cancelled.");
+            }
+
+            return this.Ok("Event successfully cancelled.");
         }
 
         [HttpPost]
         [Route("Create")]
         public async Task<IHttpActionResult> CreateEvent([FromUri]BirthdayPresentEventCreationDataTransferModel model)
         {
-            var eventId = await this.birthdayPresentEvents.Add(model);
+            var eventId = await this.birthdayPresentEvents.CreateEvent(model);
 
             if(eventId == -1)
             {

@@ -18,10 +18,7 @@
         [MinLength(ValidationConstants.FullNameMinLength, ErrorMessage = ValidationConstants.FullNameMinLengthErrorMessage)]
         public string FullName { get; set; }
 
-        [Required]
         public DateTime DateOfBirth { get; set; }
-
-        public virtual ICollection<Vote> Votes { get; set; }
 
         public async Task<ClaimsIdentity> GenerateUserIdentityAsync(UserManager<User> manager, string authenticationType)
         {

@@ -5,8 +5,6 @@
 
     public class Vote
     {
-        [Key]
-        [Column(Order = 1)]
         public int PresentId { get; set; }
 
         [ForeignKey("PresentId")]

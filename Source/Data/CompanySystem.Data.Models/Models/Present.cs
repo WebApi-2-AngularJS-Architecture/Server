@@ -13,7 +13,5 @@
         public string Description { get; set; }
 
         public decimal PriceInEuro { get; set; }
-
-        public virtual ICollection<Vote> Votes { get; set; }
     }
 }

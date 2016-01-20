@@ -2,7 +2,7 @@
 {
     using System.ComponentModel.DataAnnotations;
 
-    public class VotesDataTransferModel
+    public class VoteCreationDataTransferModel
     {
         [Required]
         public int PresentId { get; set; }

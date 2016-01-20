@@ -13,14 +13,12 @@
     {
         IQueryable<BirthdayPresentEvent> All();
 
-        Task<int> Add(BirthdayPresentEventCreationDataTransferModel birthdayPresentEvent);
+        Task<int> CreateEvent(BirthdayPresentEventCreationDataTransferModel birthdayPresentEvent);
 
-        Task<bool> CancelEvent(int eventId);
+        Task<bool> CancelEvent(BirthdayPresentEventCancelationDataTransferModel model);
 
-        Task<ICollection<ActiveEventDataTransferModel>> GetAllVisibleActive(UserBriefDataTransferModel model);
+        Task<ICollection<BirthdayPresentEventDataTransferModel>> GetAllVisibleActive(UserBriefDataTransferModel model);
 
-        Task<ICollection<BirthdayPresentEvent>> GetAllVisibleUnactive(UserBriefDataTransferModel model);
-
-        Task<ICollection<PresentDataTransferModel>> GetAvailablePresents();
+        Task<ICollection<BirthdayPresentEventDataTransferModel>> GetAllVisibleUnactive(UserBriefDataTransferModel model);
     }
 }
