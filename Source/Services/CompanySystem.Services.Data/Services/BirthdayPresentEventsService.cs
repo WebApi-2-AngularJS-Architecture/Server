@@ -60,6 +60,7 @@
 
                 // Insert model
                 this.birthdayPresentEvents.Add(birthdayPresentEvent);
+
                 await this.birthdayPresentEvents.SaveChangesAsync();
 
                 int id = birthdayPresentEvent.Id;
@@ -141,7 +142,7 @@
 
                     dict[vote.BirthdayPresentDescription].Add(vote.UserVoted);
                 }
-               
+
                 var result = new List<string>();
 
                 foreach (var pair in dict)
