@@ -1,17 +1,15 @@
 ﻿namespace CompanySystem.Server.API.Controllers
 {
+    using Common.Constants;
     using DataTransferModels.BirthdayPresentEvent;
     using DataTransferModels.Users;
-    using DataTransferModels.Votes;
+    using Services.Common.Constants;
     using Services.Data.Contracts;
-    using System.Linq;
-    using System.Net;
-    using System.Net.Http;
     using System.Threading.Tasks;
     using System.Web.Http;
     using System.Web.Http.Cors;
 
-    //[Authorize]
+    [Authorize]
     [EnableCors(origins: "*", headers: "*", methods: "*")]
     [RoutePrefix("api/Events")]
     public class BirthdayPresentEventsController : ApiController
@@ -58,10 +56,10 @@
 
             if(!isCanceled)
             {
-                return this.BadRequest("Event cannnot be cancelled.");
+                return this.BadRequest(ServerConstants.CancelEventErrorMessage);
             }
 
-            return this.Ok("Event successfully cancelled.");
+            return this.Ok(ServerConstants.CancelEventSuccessMessage);
         }
 
         [HttpPost]
@@ -70,13 +68,13 @@
         {
             var eventId = await this.birthdayPresentEvents.CreateEvent(model);
 
-            if(eventId == -1)
+            if(eventId == ServicesConstants.DbModelInsertionFailed)
             {
-                return this.BadRequest("Event insertion failed.");
+                return this.BadRequest(ServerConstants.EventInsertionErrorMessage);
             }
-            else if(eventId == -2)
+            else if(eventId == ServicesConstants.DbModelCreationFailed)
             {
-                return this.BadRequest("Event creation failed. An active event from the same type already exists or you must wait for a year to pass untill next creation.");
+                return this.BadRequest(ServerConstants.EventCreationErrorMessage);
             }
 
             return this.Ok(eventId);

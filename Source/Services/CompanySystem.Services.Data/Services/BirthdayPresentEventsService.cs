@@ -11,24 +11,17 @@
     using System.Data.Entity;
     using System.Collections.Generic;
     using Server.DataTransferModels.Users;
-    using Server.DataTransferModels.Votes;
-    using Server.DataTransferModels.Presents;
     using AutoMapper.QueryableExtensions;
-    using System.Collections;
 
     public class BirthdayPresentEventsService : IBirthdayPresentEventsService
     {
         private IRepository<BirthdayPresentEvent> birthdayPresentEvents;
         private IRepository<User> users;
-        private IRepository<Present> presents;
 
-        public BirthdayPresentEventsService(IRepository<BirthdayPresentEvent> birthdayPresentEvents,
-            IRepository<User> users,
-            IRepository<Present> presents)
+        public BirthdayPresentEventsService(IRepository<BirthdayPresentEvent> birthdayPresentEvents, IRepository<User> users)
         {
             this.birthdayPresentEvents = birthdayPresentEvents;
             this.users = users;
-            this.presents = presents;
         }
 
         public IQueryable<BirthdayPresentEvent> All()
@@ -40,7 +33,6 @@
         {
             if (this.CanCreateEvent(model))
             {
-                // Create model
                 var creator = await this.users.All().SingleOrDefaultAsync(x => x.UserName.Equals(model.CreatorUsername));
                 var birthdayGuy = await this.users.All().SingleOrDefaultAsync(x => x.UserName.Equals(model.BirthdayGuyUsername));
                 var birthdayDate = DateTime.Parse(model.BirthdayDate);
@@ -58,14 +50,10 @@
                     IsActive = true
                 };
 
-                // Insert model
                 this.birthdayPresentEvents.Add(birthdayPresentEvent);
-
                 await this.birthdayPresentEvents.SaveChangesAsync();
 
                 int id = birthdayPresentEvent.Id;
-
-                // Return result
                 return id != 0 ? id : ServicesConstants.DbModelInsertionFailed;
             }
             else
@@ -116,11 +104,16 @@
         public async Task<ICollection<BirthdayPresentEventStatistics>> GetStatistics(UserBriefDataTransferModel model)
         {
             var unactiveEvents = await this.GetAllVisibleUnactive(model);
-
-            var statistics = new List<BirthdayPresentEventStatistics>();
-
             var allUsers = await this.users.All().Select(x => x.UserName).ToListAsync();
 
+            return this.BuildStatistics(ref unactiveEvents,ref allUsers);
+        }
+
+        private ICollection<BirthdayPresentEventStatistics> BuildStatistics(ref ICollection<BirthdayPresentEventDataTransferModel> unactiveEvents, ref List<string> allUsers)
+        {
+            var statistics = new List<BirthdayPresentEventStatistics>();
+
+            // Cycles through all events and builds the statistics object
             foreach (var unactiveEvent in unactiveEvents)
             {
                 var item = new BirthdayPresentEventStatistics()
@@ -131,37 +124,41 @@
                     CreatorUsername = unactiveEvent.CreatorUsername
                 };
 
-                var dict = new Dictionary<string, List<string>>();
+                // Stores the present description and a list of all usernames that voted for this present
+                // Key(Present) => Value(Usernames) 
+                var votesStats = new Dictionary<string, List<string>>();
 
                 foreach (var vote in unactiveEvent.Votes)
                 {
-                    if (!dict.ContainsKey(vote.BirthdayPresentDescription))
+                    if (!votesStats.ContainsKey(vote.BirthdayPresentDescription))
                     {
-                        dict[vote.BirthdayPresentDescription] = new List<string>();
+                        votesStats[vote.BirthdayPresentDescription] = new List<string>();
                     }
 
-                    dict[vote.BirthdayPresentDescription].Add(vote.UserVoted);
+                    votesStats[vote.BirthdayPresentDescription].Add(vote.UserVoted);
                 }
 
-                var result = new List<string>();
+                var usersVoted = new List<string>();
 
-                foreach (var pair in dict)
+                foreach (var pair in votesStats)
                 {
-                    result.AddRange(pair.Value);
+                    usersVoted.AddRange(pair.Value);
                 }
 
-                var allUsersVoted = new HashSet<string>(result);
-                allUsersVoted.Add(item.BirthdayGuyUsername);
+                // We add the birthday guy username to this list
+                // Because we need to remove it from the list of users that havent voted using the Except() method
+                // Which produces the set difference of two sequences
+                usersVoted.Add(item.BirthdayGuyUsername);
 
-                var allUsersNotVoted = allUsers.Except(allUsersVoted);
+                var allUsersNotVoted = allUsers.Except(usersVoted);
 
-                // Attach users not voted
+                // Attach users that didn't vote for this event
                 item.UsersNotVoted = allUsersNotVoted;
 
-                // Attach vote 
-                item.Votes = dict;
+                // Attach votes stats
+                item.Votes = votesStats;
 
-                // Attach item to statistics
+                // Attach the processed item to the full statistics
                 statistics.Add(item);
             }
 

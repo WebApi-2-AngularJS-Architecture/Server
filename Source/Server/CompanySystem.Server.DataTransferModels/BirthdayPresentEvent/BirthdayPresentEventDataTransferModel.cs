@@ -1,9 +1,9 @@
 ﻿namespace CompanySystem.Server.DataTransferModels.BirthdayPresentEvent
 {
-    using Common.Mappings.Contracts;
-    using Data.Models.Models;
     using System;
     using System.Collections.Generic;
+    using Common.Mappings.Contracts;
+    using Data.Models.Models;
     using Votes;
     using AutoMapper;
 

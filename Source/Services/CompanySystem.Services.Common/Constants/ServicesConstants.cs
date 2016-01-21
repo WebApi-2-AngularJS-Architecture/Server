@@ -1,11 +1,5 @@
 ﻿namespace CompanySystem.Services.Common.Constants
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
-
     public class ServicesConstants
     {
         // Common
@@ -15,6 +9,8 @@
         // Events service
         public const bool EventCancellationSuccessful = true;
         public const bool EventCancellationFailed = false;
+
+        // Votes service
         public const int VoteCreationSuccessful = 1;
     }
 }

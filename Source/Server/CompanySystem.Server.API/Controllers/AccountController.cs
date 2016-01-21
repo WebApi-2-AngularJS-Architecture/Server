@@ -8,7 +8,6 @@
     using System.Threading.Tasks;
     using System.Web;
     using System.Web.Http;
-    using System.Web.Http.ModelBinding;
     using Microsoft.AspNet.Identity;
     using Microsoft.AspNet.Identity.EntityFramework;
     using Microsoft.AspNet.Identity.Owin;
@@ -20,10 +19,6 @@
     using Data.Models.Models;
     using DataTransferModels.Account;
     using System.Web.Http.Cors;
-    using Services.Data.Contracts;
-    using Services.Common.Constants;
-    using System.Linq;
-    using System.Data.Entity;
 
     [Authorize]
     [RoutePrefix("api/Account")]

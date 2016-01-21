@@ -1,9 +1,7 @@
 ﻿namespace CompanySystem.Server.DataTransferModels.BirthdayPresentEvent
 {
-    using Common.Mappings.Contracts;
-    using System.Collections.Generic;
-    using AutoMapper;
     using System;
+    using System.Collections.Generic;
 
     public class BirthdayPresentEventStatistics
     {

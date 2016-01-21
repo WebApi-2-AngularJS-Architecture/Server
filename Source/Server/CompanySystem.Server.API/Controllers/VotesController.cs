@@ -8,7 +8,7 @@
     using System.Web.Http;
     using System.Web.Http.Cors;
 
-    //[Authorize]
+    [Authorize]
     [EnableCors(origins: "*", headers: "*", methods: "*")]
     [RoutePrefix("api/Votes")]
     public class VotesController : ApiController
