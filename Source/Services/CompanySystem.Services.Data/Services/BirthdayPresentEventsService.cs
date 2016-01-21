@@ -14,6 +14,8 @@
     using Server.DataTransferModels.Votes;
     using Server.DataTransferModels.Presents;
     using AutoMapper.QueryableExtensions;
+    using System.Collections;
+
     public class BirthdayPresentEventsService : IBirthdayPresentEventsService
     {
         private IRepository<BirthdayPresentEvent> birthdayPresentEvents;
@@ -108,6 +110,61 @@
                .ToListAsync();
 
             return unactiveEvents;
+        }
+
+        public async Task<ICollection<BirthdayPresentEventStatistics>> GetStatistics(UserBriefDataTransferModel model)
+        {
+            var unactiveEvents = await this.GetAllVisibleUnactive(model);
+
+            var statistics = new List<BirthdayPresentEventStatistics>();
+
+            var allUsers = await this.users.All().Select(x => x.UserName).ToListAsync();
+
+            foreach (var unactiveEvent in unactiveEvents)
+            {
+                var item = new BirthdayPresentEventStatistics()
+                {
+                    EventId = unactiveEvent.EventId,
+                    BirthdayDate = unactiveEvent.BirthdayDate,
+                    BirthdayGuyUsername = unactiveEvent.BirthdayGuyUsername,
+                    CreatorUsername = unactiveEvent.CreatorUsername
+                };
+
+                var dict = new Dictionary<string, List<string>>();
+
+                foreach (var vote in unactiveEvent.Votes)
+                {
+                    if (!dict.ContainsKey(vote.BirthdayPresentDescription))
+                    {
+                        dict[vote.BirthdayPresentDescription] = new List<string>();
+                    }
+
+                    dict[vote.BirthdayPresentDescription].Add(vote.UserVoted);
+                }
+               
+                var result = new List<string>();
+
+                foreach (var pair in dict)
+                {
+                    result.AddRange(pair.Value);
+                }
+
+                var allUsersVoted = new HashSet<string>(result);
+                allUsersVoted.Add(item.BirthdayGuyUsername);
+
+                var allUsersNotVoted = allUsers.Except(allUsersVoted);
+
+                // Attach users not voted
+                item.UsersNotVoted = allUsersNotVoted;
+
+                // Attach vote 
+                item.Votes = dict;
+
+                // Attach item to statistics
+                statistics.Add(item);
+            }
+
+            return statistics;
         }
 
         private bool CanCreateEvent(BirthdayPresentEventCreationDataTransferModel model)

@@ -74,6 +74,7 @@
     <Compile Include="BirthdayPresentEvent\BirthdayPresentEventDataTransferModel.cs" />
     <Compile Include="BirthdayPresentEvent\BirthdayPresentEventCancelationDataTransferModel.cs" />
     <Compile Include="BirthdayPresentEvent\BirthdayPresentEventCreationDataTransferModel.cs" />
+    <Compile Include="BirthdayPresentEvent\BirthdayPresentEventStatistics.cs" />
     <Compile Include="Presents\PresentDataTransferModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Users\UserBriefDataTransferModel.cs" />

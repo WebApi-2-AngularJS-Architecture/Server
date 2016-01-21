@@ -9,7 +9,7 @@
 
     public class BirthdayPresentEventDataTransferModel : IMapFrom<BirthdayPresentEvent>, IHaveCustomMappings
     {
-        public int Id { get; set; }
+        public int EventId { get; set; }
 
         public DateTime BirthdayDate { get; set; }
 
@@ -27,7 +27,7 @@
                 .ForMember(dest => dest.Votes, opt => opt.MapFrom(src => src.Votes))
                 .ForMember(dest => dest.CreatorUsername, opt => opt.MapFrom(src => src.Creator.UserName))
                 .ForMember(dest => dest.BirthdayGuyUsername, opt => opt.MapFrom(src => src.BirthdayGuy.UserName))
-                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.EventId, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest => dest.BirthdayDate, opt => opt.MapFrom(src => src.BirthdayDate))
                 .ForMember(dest => dest.IsActive, opt => opt.MapFrom(src => src.IsActive));
         }

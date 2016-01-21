@@ -41,9 +41,18 @@
             return this.Ok(unactiveEvents);
         }
 
+        [HttpGet]
+        [Route("Statistics")]
+        public async Task<IHttpActionResult> GetStatistics([FromUri]UserBriefDataTransferModel model)
+        {
+            var statistics = await this.birthdayPresentEvents.GetStatistics(model);
+
+            return this.Ok(statistics);
+        }
+
         [HttpPost]
         [Route("Cancel")]
-        public async Task<IHttpActionResult> CancelEvent([FromUri] BirthdayPresentEventCancelationDataTransferModel model)
+        public async Task<IHttpActionResult> CancelEvent([FromBody] BirthdayPresentEventCancelationDataTransferModel model)
         {
             var isCanceled = await this.birthdayPresentEvents.CancelEvent(model);
 
@@ -57,7 +66,7 @@
 
         [HttpPost]
         [Route("Create")]
-        public async Task<IHttpActionResult> CreateEvent([FromUri]BirthdayPresentEventCreationDataTransferModel model)
+        public async Task<IHttpActionResult> CreateEvent([FromBody]BirthdayPresentEventCreationDataTransferModel model)
         {
             var eventId = await this.birthdayPresentEvents.CreateEvent(model);
 

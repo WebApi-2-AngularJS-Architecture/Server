@@ -36,7 +36,7 @@
 
         [HttpPost]
         [Route("Create")]
-        public async Task<IHttpActionResult> VoteForEvent([FromUri]VoteCreationDataTransferModel model)
+        public async Task<IHttpActionResult> VoteForEvent([FromBody]VoteCreationDataTransferModel model)
         {
             var result = await this.votes.Add(model);
 

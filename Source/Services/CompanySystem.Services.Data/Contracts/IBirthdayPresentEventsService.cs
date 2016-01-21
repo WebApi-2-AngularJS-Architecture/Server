@@ -17,6 +17,8 @@
 
         Task<bool> CancelEvent(BirthdayPresentEventCancelationDataTransferModel model);
 
+        Task<ICollection<BirthdayPresentEventStatistics>> GetStatistics(UserBriefDataTransferModel model);
+
         Task<ICollection<BirthdayPresentEventDataTransferModel>> GetAllVisibleActive(UserBriefDataTransferModel model);
 
         Task<ICollection<BirthdayPresentEventDataTransferModel>> GetAllVisibleUnactive(UserBriefDataTransferModel model);
